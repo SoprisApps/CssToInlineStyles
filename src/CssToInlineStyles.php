@@ -98,8 +98,11 @@ class CssToInlineStyles
      *
      * @return string
      * @param  bool [optional] $outputXHTML Should we output valid XHTML?
+     * @param  integer [optional] $libXMLOptions Since PHP 5.4.0 and Libxml 2.6.0, you may also use the
+     *                                           options parameter to specify additional Libxml parameters.
+     *                                           Recommend these options: LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
      */
-    public function convert($outputXHTML = false)
+    public function convert($outputXHTML = false, $libXMLOptions = 0)
     {
         // redefine
         $outputXHTML = (bool) $outputXHTML;
@@ -136,7 +139,11 @@ class CssToInlineStyles
         $internalErrors = libxml_use_internal_errors(true);
 
         // load HTML
-        $document->loadHTML($this->html);
+        if($libXMLOptions !== 0) {
+            $document->loadHTML($this->html, $libXMLOptions);
+        } else {
+            $document->loadHTML($this->html);
+        }
 
         // Restore error level
         libxml_use_internal_errors($internalErrors);
